@@ -14,4 +14,5 @@ Diseñador UI
 Frontend Developer
 Bakend Developer
 QA tester
+DevOps
 

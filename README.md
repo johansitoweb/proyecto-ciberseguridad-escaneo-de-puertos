@@ -1,10 +1,9 @@
-# proyecto-cirverseguridad-escaneo-de-puertos
+# Proyecto-ciberseguridad-escaneo-de-puertos
 Integrantes del Equipo y roles
 Moises , Keilin , Johan
 
 Moises
-Bakend Developer y 
-Lider del Proyecto
+Bakend Developer 
 
 Keilin
 Bakend Developer

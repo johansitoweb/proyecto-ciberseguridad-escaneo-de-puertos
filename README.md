@@ -3,15 +3,15 @@ Integrantes del Equipo y roles
 Moises , Keilin , Johan
 
 Moises
-Bakend Developer 
+Backend Developer 
 
 Keilin
-Bakend Developer
+Backend Developer
 
 Johan
 Diseñador UI ,
-Frontend Developer ,
-Bakend Developer ,
+Front-end Developer ,
+Backend Developer ,
 QA tester ,
 DevOps
 

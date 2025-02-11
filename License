@@ -1,8 +1,54 @@
 -----
-Proyecto de ciberseguridad Escaneo de puertos
+# LICENCIA DE USO Y DISTRIBUCIÓN
 
-integrantes
+## 1. INFORMACIÓN GENERAL
+*Nombre del Proyecto: Port-Gadget: Escáner de Puertos Profesional  
+*Autores: Moisés, Keilin, Johan  
+*Tipo de Software: Herramienta de ciberseguridad para escaneo de puertos y auditoría de redes  
+*Fecha de Emisión: [10/02/2025]  
 
-Moises
-Keilin
-Johan
+## 2. ALCANCE Y PERMISOS
+Esta licencia establece los términos y condiciones bajo los cuales se permite el uso, modificación y distribución del software Port-Gadget.
+
+### 2.1 Permisos Concedidos
+Se permite a los usuarios:
+✅ Usar este software con fines educativos, investigativos y de auditoría de seguridad en redes propias o autorizadas.  
+✅ Modificar el código fuente para personalización y mejora del software.  
+✅ Distribuir versiones modificadas del software, siempre que se incluya esta licencia y se otorgue crédito a los autores originales.  
+✅ Integrar este software en sistemas empresariales o gubernamentales bajo cumplimiento legal.  
+
+### 2.2 Restricciones
+🚫 **Prohibido su uso para actividades ilegales o sin autorización del propietario de la red. 
+🚫 No se permite eliminar, modificar o alterar créditos de los autores originales sin su consentimiento.  
+🚫 No se permite su reventa sin una licencia comercial adquirida de los autores originales.  
+🚫 El uso de este software en pruebas de penetración debe contar con autorización expresa del propietario del sistema objetivo.  
+
+## 3. RESPONSABILIDAD Y DESCARGO DE RESPONSABILIDAD
+*Port-Gadget es una herramienta desarrollada con fines educativos y de auditoría de seguridad.
+
+📌 Uso bajo responsabilidad del usuario: Los autores no se hacen responsables de daños directos o indirectos derivados del uso indebido de este software.
+
+📌 Cumplimiento legal: El usuario es responsable de asegurarse de que el uso de Port-Gadget cumpla con las leyes y regulaciones de su jurisdicción.
+
+📌 Garantía limitada: Este software se proporciona "TAL CUAL", sin garantías explícitas o implícitas de funcionamiento o seguridad.
+
+## 4. SEGURIDAD Y PRIVACIDAD
+Para garantizar la seguridad y privacidad en el uso de Port-Gadget, se recomienda:
+🔹 No ejecutar el software en redes públicas sin autorización.  
+🔹 No compartir datos de escaneo sin consentimiento de los interesados.  
+🔹 No almacenar información confidencial en sistemas inseguros.  
+
+## 5. LICENCIAMIENTO Y MODIFICACIONES
+Este software se publica bajo la licencia MIT con restricciones adicionales mencionadas en la sección 2.  
+Los usuarios pueden contribuir al desarrollo del software a través de mejoras y correcciones, siempre respetando los términos de esta licencia.  
+
+## 6. CONTACTO
+Para consultas sobre licenciamiento, colaboraciones o adquisición de una licencia comercial, contactar a los desarrolladores:  
+📩 [escaneodepuertos27@gmail.com]  
+
+---
+
+*Moisés, Keilin y Johan agradecen tu interés en Port-Gadget y recuerdan que la ciberseguridad es responsabilidad de todos.
+
+🚀 ¡Hack the system, but ethically! 🚀
+

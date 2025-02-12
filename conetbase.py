@@ -11,6 +11,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # Probar conexión
 try:
     with engine.connect():
-        print("✅ Conectado a PostgreSQL correctamente")
+        print("Conectado a PostgreSQL correctamente")
 except Exception as e:
-    print(f"❌ Error conectando a PostgreSQL: {e}")
+    print(f"Error conectando a PostgreSQL: {e}")

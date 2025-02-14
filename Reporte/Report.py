@@ -1,21 +1,23 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
 import datetime
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import pandas as pd
 
-# Configurar la conexión a PostgreSQL
+
 DATABASE_URL = "postgresql://soportetech:aeiou270@localhost:5432/Port-Gadget"
 engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
+
+# Crear la sesión
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def generar_reporte_pdf(nombre_archivo="reporte_escaneo.pdf"):
     session = SessionLocal()
-    
-    # Consulta los datos de la tabla (ajusta esto según tu modelo de base de datos)
-    resultados = session.execute("SELECT ip, puerto, estado, servicio FROM escaneos").fetchall()
-
-    session.close()
+    try:
+        resultados = session.execute("SELECT ip, puerto, estado, servicio FROM escaneos").fetchall()
+    finally:
+        session.close()
 
     c = canvas.Canvas(nombre_archivo, pagesize=letter)
     c.setFont("Helvetica", 12)
@@ -29,5 +31,16 @@ def generar_reporte_pdf(nombre_archivo="reporte_escaneo.pdf"):
     c.save()
     print(f"✅ Reporte PDF generado: {nombre_archivo}")
 
-# Ejecutar función
+def exportar_csv(nombre_archivo="reporte_escaneo.csv"):
+    session = SessionLocal()
+    try:
+        resultados = session.execute("SELECT ip, puerto, estado, servicio FROM escaneos").fetchall()
+    finally:
+        session.close()
+
+    df = pd.DataFrame(resultados, columns=["IP", "Puerto", "Estado", "Servicio"])
+    df.to_csv(nombre_archivo, index=False)
+    print(f"✅ Reporte CSV generado: {nombre_archivo}")
+
 generar_reporte_pdf()
+exportar_csv()

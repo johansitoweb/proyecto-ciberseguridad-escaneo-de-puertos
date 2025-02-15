@@ -6,7 +6,7 @@ Moises
 Backend Developer 
 
 Keilin
-Backend Developer
+full stack Developer
 
 Johan
 Diseñador UI ,

@@ -1,0 +1,11 @@
+ pandas
+scikit-learn
+tensorflow
+requests
+shodan
+scapy
+dash
+plotly
+google-cloud-functions
+phing3 
+seaborn

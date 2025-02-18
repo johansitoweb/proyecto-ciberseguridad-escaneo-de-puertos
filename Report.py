@@ -1,10 +1,9 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import datetime
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text  # Importar text desde sqlalchemy
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
-
 
 DATABASE_URL = "postgresql://soportetech:aeiou270@localhost:5432/Port-Gadget"
 engine = create_engine(DATABASE_URL)
@@ -15,7 +14,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def generar_reporte_pdf(nombre_archivo="reporte_escaneo.pdf"):
     session = SessionLocal()
     try:
-        resultados = session.execute("SELECT ip, puerto, estado, servicio FROM escaneos").fetchall()
+        # Usar text() para envolver la consulta SQL
+        resultados = session.execute(text("SELECT ip, puerto, estado, servicio FROM escaneos")).fetchall()
     finally:
         session.close()
 
@@ -34,7 +34,8 @@ def generar_reporte_pdf(nombre_archivo="reporte_escaneo.pdf"):
 def exportar_csv(nombre_archivo="reporte_escaneo.csv"):
     session = SessionLocal()
     try:
-        resultados = session.execute("SELECT ip, puerto, estado, servicio FROM escaneos").fetchall()
+        # Usar text() para envolver la consulta SQL
+        resultados = session.execute(text("SELECT ip, puerto, estado, servicio FROM escaneos")).fetchall()
     finally:
         session.close()
 
@@ -42,5 +43,6 @@ def exportar_csv(nombre_archivo="reporte_escaneo.csv"):
     df.to_csv(nombre_archivo, index=False)
     print(f"✅ Reporte CSV generado: {nombre_archivo}")
 
-generar_reporte_pdf()
-exportar_csv()
+if __name__ == "__main__":
+    generar_reporte_pdf()
+    exportar_csv()

@@ -11,10 +11,10 @@ import nmap
 # Importaciones de las funcionalidades avanzadas
 import anomaly_detection
 import cloud_scanning
-from . import conetbase
+import conetbase
 import shodan_integration
 import stealth_mode
-from . import Report
+import Report
 
 # Configuración del registro
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)

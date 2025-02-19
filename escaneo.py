@@ -7,12 +7,13 @@ from scapy.all import IP, IPv6, TCP, sr1, RandShort, UDP
 import subprocess
 import os
 import nmap
+import threading  # Importa el módulo de threading
+from tkinter import ttk  # Importa ttk para la barra de progreso
 
 # Importaciones de las funcionalidades avanzadas
 import anomaly_detection
 import cloud_scanning
 import conetbase
-import shodan_integration
 import stealth_mode
 import Report
 
@@ -21,28 +22,26 @@ logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 # --- Funciones para las funcionalidades avanzadas ---
 def open_anomaly_detection():
-    anomaly_detection.detect_anomalies('../data/network_traffic.csv')
+    csv_path = Report.obtener_ruta_csv()
+    anomaly_detection.detect_anomalies(csv_path)
 
 def open_cloud_scanning():
     target_ip = entry_target.get()
     if target_ip:
-        cloud_scanning.scan_ip(target_ip)
+        csv_path = Report.obtener_ruta_csv()
+        cloud_scanning.scan_ip(target_ip, csv_path)
     else:
         messagebox.showerror("Error", "Por favor ingresa una IP objetivo.")
 
-def open_shodan_integration():
-    target_ip = entry_target.get()
-    if target_ip:
-        shodan_integration.get_shodan_info('YOUR_SHODAN_API_KEY', target_ip, save_to_file=True)
-    else:
-        messagebox.showerror("Error", "Por favor ingresa una IP objetivo.")
 
 def open_stealth_mode():
     target_ip = entry_target.get()
     if target_ip:
-        stealth_mode.stealth_scan(target_ip, start_port=1, end_port=1024, delay=0.1)
+        csv_path = Report.obtener_ruta_csv()
+        stealth_mode.stealth_scan(target_ip, start_port=1, end_port=1024, delay=0.1, csv_path=csv_path)
     else:
         messagebox.showerror("Error", "Por favor ingresa una IP objetivo.")
+
 
 # --- Nuevas funciones para generar reportes ---
 def generar_reporte_pdf():
@@ -182,19 +181,34 @@ def run_scan():
             messagebox.showerror("Error", "Por favor ingresa una lista válida de números de puerto separados por comas.")
             return
 
-    results_text.delete("0.0", tk.END)
-    is_ipv6 = ":" in target
+    # Lanza el escaneo en un hilo separado para no bloquear la interfaz gráfica
+    threading.Thread(target=start_scan, args=(target, ports, protocol)).start()
 
-    for port in ports:
-        results_text.insert(tk.END, f"Escaneando puerto {port}...\n")
+def start_scan(target, ports, protocol):
+    # Limpia el área de resultados y reinicia la barra de progreso
+    results_text.delete("0.0", tk.END)
+    progress_bar['value'] = 0
+    num_ports = len(ports)
+    progress_step = 100 / num_ports if num_ports > 0 else 0  # Calcula el incremento para cada puerto
+
+    for i, port in enumerate(ports):
+        root.after(0, results_text.insert, tk.END, f"Escaneando puerto {port}...\n")
+        root.after(0, results_text.see, tk.END)  # Asegura que el texto se desplace para mostrar lo último
+
         if protocol == "TCP":
-            syn_result = syn_scan(target, port, is_ipv6)
+            syn_result = syn_scan(target, port, ":" in target)
             service_name = identify_service(port)
-            results_text.insert(tk.END, f"Puerto {port} - TCP: {syn_result}, Servicio: {service_name}\n")
+            root.after(0, results_text.insert, tk.END, f"Puerto {port} - TCP: {syn_result}, Servicio: {service_name}\n")
         elif protocol == "UDP":
             udp_results = scan_udp(target, [port])
             service_name = identify_service(port)
-            results_text.insert(tk.END, f"Puerto {port} - UDP: {udp_results[port]}, Servicio: {service_name}\n")
+            root.after(0, results_text.insert, tk.END, f"Puerto {port} - UDP: {udp_results[port]}, Servicio: {service_name}\n")
+
+        root.after(0, results_text.see, tk.END)  # Muestra los resultados en tiempo real
+        progress_bar['value'] += progress_step
+        root.update_idletasks()  # Actualiza la GUI para mostrar el progreso
+
+    root.after(0, messagebox.showinfo, "Escaneo Completo", "Escaneo finalizado.") # Notifica al usuario que el escaneo ha terminado
 
 def close_session():
     root.destroy()
@@ -221,7 +235,6 @@ advanced_menu = Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Funcionalidades Avanzadas", menu=advanced_menu)
 advanced_menu.add_command(label="Detección de Anomalías", command=open_anomaly_detection)
 advanced_menu.add_command(label="Escaneo en la Nube", command=open_cloud_scanning)
-advanced_menu.add_command(label="Integración con Shodan", command=open_shodan_integration)
 advanced_menu.add_command(label="Modo Sigiloso", command=open_stealth_mode)
 advanced_menu.add_separator()  # Separador visual
 advanced_menu.add_command(label="Generar Reporte PDF", command=generar_reporte_pdf)
@@ -233,7 +246,6 @@ main_frame.pack(pady=20, padx=20, fill="x")
 
 input_frame = ctk.CTkFrame(main_frame)
 input_frame.pack(pady=(0, 15), padx=10, fill="x")
-
 label_target = ctk.CTkLabel(input_frame, text="IP del objetivo (IPv4 o IPv6):")
 label_target.pack(side="left", padx=(0, 5))
 entry_target = ctk.CTkEntry(input_frame, width=200)
@@ -289,6 +301,10 @@ radio_udp.pack(side="left", padx=5)
 
 scan_button = ctk.CTkButton(root, text="Iniciar Escaneo", command=run_scan)
 scan_button.pack(pady=10)
+
+# Barra de progreso
+progress_bar = ttk.Progressbar(root, orient="horizontal", length=600, mode="determinate")
+progress_bar.pack(pady=10)
 
 results_text = scrolledtext.ScrolledText(root, width=100, height=20, bg="#282a36", fg="white", insertbackground="white", font=("Consolas", 11), relief=tk.FLAT)
 results_text.pack(pady=10, padx=20, fill="both", expand=True)

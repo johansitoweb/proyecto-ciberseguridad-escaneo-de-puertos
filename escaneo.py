@@ -27,7 +27,6 @@ def main(page: ft.Page):
     page.bgcolor = ft.colors.BLACK  # Fondo de respaldo por si la imagen no carga
     # URL de la imagen de fondo
     background_image_url = "https://i.pinimg.com/736x/65/92/b0/6592b033badec6e157457a969305e1b1.jpg"
-
     # --- Funciones para las funcionalidades avanzadas ---
     def open_anomaly_detection(e):
         csv_path = Report.obtener_ruta_csv()
@@ -356,7 +355,7 @@ def main(page: ft.Page):
     scan_button = ft.ElevatedButton(text="Iniciar Escaneo", on_click=run_scan, color=ft.colors.WHITE, bgcolor=ft.colors.BLUE)
     detect_button = ft.ElevatedButton(text="Detectar Dispositivos", on_click=run_device_discovery, color=ft.colors.WHITE, bgcolor=ft.colors.BLUE)
     progress_bar = ft.ProgressBar(width=600, color=ft.colors.BLUE)
-    results_text = ft.TextField(
+    results_text = ft.TextField( 
         multiline=True,
         read_only=True,
         width=600,
@@ -367,8 +366,8 @@ def main(page: ft.Page):
     results_container = ft.Column(
         [results_text],
         scroll=ft.ScrollMode.AUTO,  # Habilitar scroll automático
-        width=700,
-        height=400,
+        width=590,
+        height=590,
     )
     close_button = ft.ElevatedButton(text="Cerrar Sesión", on_click=close_session, color=ft.colors.WHITE, bgcolor=ft.colors.RED)  # Botón rojo para cerrar sesión
 
@@ -413,15 +412,15 @@ def main(page: ft.Page):
                 [
                     header,
                     ft.Divider(color=ft.colors.BLUE, height=40),  # Línea divisoria azul
+                    ft.Text("Tipo de escaneo", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE),
                     ft.Row([entry_target, advanced_menu], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                    ft.Text("Tipo de escaneo", color=ft.colors.WHITE),
                     var_scan_type,
-                    ft.Divider(color=ft.colors.BLUE, height=40),  # Línea divisoria azul
                     entry_ports,  # Campo de puertos personalizados
-                    ft.Text("Selecciona el protocolo", color=ft.colors.WHITE),
+                    ft.Divider(color=ft.colors.BLUE, height=40),  # Línea divisoria azul
+                    ft.Text("Selecciona el protocolo", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE),
                     var_protocol,
                     ft.Divider(color=ft.colors.BLUE, height=40),  # Línea divisoria azul
-                    ft.Row([scan_button, detect_button], spacing=20),  # Botones alineados horizontalmente
+                    ft.Row([scan_button, detect_button], spacing=20,alignment=ft.MainAxisAlignment.CENTER),  # Botones alineados horizontalmente
                     progress_bar,
                     results_container,  # Usar el Column con scroll
                     close_button,
@@ -430,8 +429,9 @@ def main(page: ft.Page):
                 alignment=ft.MainAxisAlignment.CENTER,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 scroll=ft.ScrollMode.AUTO,  # Habilitar scroll en la columna principal
+               
             ),
-            padding=20,  # Añadir padding para que el contenido no esté pegado a los bordes
+            padding=30,  # Añadir padding para que el contenido no esté pegado a los bordes
         ),
     )
 

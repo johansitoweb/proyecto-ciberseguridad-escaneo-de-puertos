@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 5000
 
 # Comando para ejecutar la aplicación Flet
-CMD ["flet", "run", "login.py"]
+CMD ["flet", "run", "login.py" , "escaneo.py" , "tcp_scanner.py" , "udp_scanner.py" , "Nmap_versiones.py"]

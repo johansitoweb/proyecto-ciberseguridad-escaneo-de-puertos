@@ -3,7 +3,6 @@ import json
 import argparse
 import socket
 import subprocess
-import re
 import ipaddress
 
 def validate_ip(ip):

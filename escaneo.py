@@ -1,5 +1,6 @@
 import logging
-from scapy.all import *
+from scapy.all import sr, sr1, TCP, RandShort
+from scapy.layers.inet import IP
 import socket
 
 # Configuración del registro 

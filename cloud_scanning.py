@@ -40,9 +40,9 @@ def scan_ip(target_ip, use_https=False, timeout=5):
     except requests.exceptions.RequestException as req_err:
         logging.error(f'Request exception for {target_ip}: {req_err}')
         return {'error': f'Request exception occurred: {req_err}'}
-    except Exception as err:
-        logging.critical(f'Unexpected error for {target_ip}: {err}')
-        return {'error': f'An unexpected error occurred: {err}'}
+    except Exception as cerr:
+        logging.critical(f'Unexpected error for {target_ip}: {cerr}')
+        return {'error': f'An unexpected error occurred: {cerr}'}
 
 def save_results(results, filename='scan_results.json'):
     """Guarda los resultados del escaneo en un archivo JSON."""

@@ -2,27 +2,34 @@ import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
+import smtplib
+from email.mime.text import MIMEText
+import logging
 
-# Función para mostrar alertas
-def mostrar_alerta(vulnerabilidades):
-    print("¡Alerta de Seguridad!")
-    print("Se han detectado las siguientes vulnerabilidades:")
-    print(vulnerabilidades)
-    print("Revisa el panel de control para más detalles.")
+# Función para enviar alertas
+def enviar_alerta(mensaje):
+    msg = MIMEText(mensaje)
+    msg['Subject'] = 'Alerta de Seguridad'
+    msg['From'] = 'tu_email@example.com'
+    msg['To'] = 'destinatario@example.com'
 
-# Función para entrenar el modelo y detectar vulnerabilidades
-def entrenar_modelo(archivo_csv):
-    # Cargar datos
+    try:
+        with smtplib.SMTP('smtp.example.com') as server:
+            server.login('tu_email@example.com', 'tu_contraseña')
+            server.send_message(msg)
+        print("Alerta enviada con éxito.")
+    except Exception as e:
+        print(f"Error al enviar la alerta: {e}")
+
+# Función para detectar vulnerabilidadess
+def detectar_vulnerabilidades(archivo_csv):
     data = pd.read_csv(archivo_csv)
 
-    # Verificar las columnas en el DataFrame
-    print("Columnas en el DataFrame:", data.columns)
-
-    # Asegúrate de que la columna 'vulnerabilidad_detectada' existe
-    if 'vulnerabilidad_detectada' not in data.columns:
-        raise KeyError("La columna 'vulnerabilidad_detectada' no se encuentra en el archivo CSV.")
-    
     # Preprocesamiento
+    if data.isnull().values.any():
+        logging.warning("Hay valores nulos en los datos. Por favor, limpia los datos antes de continuar.")
+        return
+
     X = data.drop('vulnerabilidad_detectada', axis=1)
     y = data['vulnerabilidad_detectada']
 
@@ -47,10 +54,5 @@ def entrenar_modelo(archivo_csv):
     print(report)
 
     # Generar alertas si se detectan vulnerabilidades
-    vulnerabilidades_detectadas = X_test[y_pred == 1]
-    if not vulnerabilidades_detectadas.empty:
-        mostrar_alerta(vulnerabilidades_detectadas)
-
-# Ejecutar el entrenamiento del modelo
-if __name__ == "__main__":
-    entrenar_modelo('datos.csv')
+    if any(y_pred == 1):  # Si se detecta alguna vulnerabilidad
+        enviar_alerta("Se ha detectado una vulnerabilidad en los nuevos datos.")

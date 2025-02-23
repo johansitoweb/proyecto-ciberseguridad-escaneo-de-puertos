@@ -2,8 +2,20 @@ import flet as ft
 import socket
 import threading
 import logging
-from scapy.all import *
-import socket
+from scapy.all import IP, IPv6, TCP, sr1, RandShort, UDP
+import subprocess
+import os
+import nmap
+import pyshark
+
+# Importaciones de las funcionalidades avanzadas
+import anomaly_detection
+import shodan_integration
+import dashboard
+import cloud_scanning
+import conetbase
+import stealth_mode
+import Report
 
 # Configuración del registro
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)

@@ -10,6 +10,8 @@ import pyshark
 
 # Importaciones de las funcionalidades avanzadas
 import anomaly_detection
+import shodan_integration
+import dashboard
 import cloud_scanning
 import conetbase
 import stealth_mode

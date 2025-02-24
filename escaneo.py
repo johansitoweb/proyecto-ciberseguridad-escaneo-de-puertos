@@ -17,6 +17,7 @@ import conetbase
 import stealth_mode
 import Report
 
+
 # Configuración del registro
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
@@ -29,25 +30,106 @@ def main(page: ft.Page):
     page.bgcolor = ft.colors.BLACK  # Fondo de respaldo por si la imagen no carga
     # URL de la imagen de fondo
     background_image_url = "https://i.pinimg.com/736x/65/92/b0/6592b033badec6e157457a969305e1b1.jpg"
+
+    
     # --- Funciones para las funcionalidades avanzadas ---
     def open_anomaly_detection(e):
-        csv_path = Report.obtener_ruta_csv()
-        anomaly_detection.detect_anomalies(csv_path)
-        page.snack_bar = ft.SnackBar(ft.Text("Detección de anomalías completada."))
-        page.snack_bar.open = True
-        page.update()
-
-    def open_cloud_scanning(e):
-        target_ip = entry_target.value
-        if target_ip:
+     """
+     Función para realizar la detección de anomalías utilizando el archivo CSV generado.
+     """
+     target_ip = entry_target.value  # Obtener la IP objetivo desde la interfaz gráfica
+     if target_ip:
+        try:
+            # Obtener la ruta del archivo CSV
             csv_path = Report.obtener_ruta_csv()
-            cloud_scanning.scan_ip(target_ip, csv_path)
-            page.snack_bar = ft.SnackBar(ft.Text("Escaneo en la nube completado."))
+            
+            # Verificar si el archivo CSV existe
+            if not os.path.exists(csv_path):
+                page.snack_bar = ft.SnackBar(ft.Text(f"Error: El archivo {csv_path} no se encuentra."))
+                page.snack_bar.open = True
+                page.update()
+                return
+
+            # Llamar a la función de detección de anomalías
+            anomaly_detection.detect_anomalies(csv_path)
+            
+            # Mostrar mensaje de éxito en la interfaz
+            page.snack_bar = ft.SnackBar(ft.Text("Detección de anomalías completada."))
+            page.snack_bar.open = True
+        except Exception as ex:
+            # Mostrar mensaje de error en la interfaz
+            page.snack_bar = ft.SnackBar(ft.Text(f"Error durante la detección de anomalías: {ex}"))
+            page.snack_bar.open = True
+     else:
+        # Mostrar mensaje si no se ingresa una IP
+            page.snack_bar = ft.SnackBar(ft.Text("Por favor ingresa una IP objetivo."))
+            page.snack_bar.open = True
+
+    # Actualizar la página
+    page.update()
+
+
+    def open_shodan_integration(e):
+        target_ip = entry_target.value  # Obtener la IP objetivo desde la interfaz gráfica
+        if target_ip:
+        # Validar la IP
+         if not validate_ip(target_ip):
+            page.snack_bar = ft.SnackBar(ft.Text("La dirección IP no es válida."))
+            page.snack_bar.open = True
+            page.update()
+            return
+        api_key = "ioXrlPOU3NC4RUTQs6MY7oJvLBaqz8t"  # Reemplaza con tu API key de Shodan
+        nmap_options = "-sV"  # Opciones de Nmap (puedes cambiarlas si es necesario)
+        save_to_file = True  # Guardar la información en un archivo JSON
+       
+        try:
+            shodan_integration.get_shodan_info(api_key, target_ip, nmap_options, save_to_file)
+            page.snack_bar = ft.SnackBar(ft.Text("Obteniendo información de Shodan completado."))
+            page.snack_bar.open = True
+        except Exception as ex:
+            page.snack_bar = ft.SnackBar(ft.Text(f"Error al obtener información de Shodan: {ex}"))
             page.snack_bar.open = True
         else:
             page.snack_bar = ft.SnackBar(ft.Text("Por favor ingresa una IP objetivo."))
             page.snack_bar.open = True
-        page.update()
+    page.update()
+
+
+    def open_cloud_scanning(e):
+     """
+     Función para realizar el escaneo en la nube.
+     """
+     target_ip = entry_target.value  # Obtener la IP objetivo desde la interfaz gráfica
+     if target_ip:
+        try:
+            # Obtener la ruta del archivo CSV
+            csv_path = Report.obtener_ruta_csv()
+            
+            # Verificar si el archivo CSV existe
+            if not os.path.exists(csv_path):
+                page.snack_bar = ft.SnackBar(ft.Text(f"Error: El archivo {csv_path} no se encuentra."))
+                page.snack_bar.open = True
+                page.update()
+                return
+
+            # Llamar a la función de escaneo en la nube
+            cloud_scanning.scan_ip(target_ip, csv_path)
+            
+            # Mostrar mensaje de éxito en la interfaz
+            page.snack_bar = ft.SnackBar(ft.Text("Escaneo en la nube completado."))
+            page.snack_bar.open = True
+        except Exception as ex:
+            # Mostrar mensaje de error en la interfaz
+            page.snack_bar = ft.SnackBar(ft.Text(f"Error durante el escaneo en la nube: {ex}"))
+            page.snack_bar.open = True
+        else:
+        # Mostrar mensaje si no se ingresa una IP
+           page.snack_bar = ft.SnackBar(ft.Text("Por favor ingresa una IP objetivo."))
+           page.snack_bar.open = True
+
+    # Actualizar la página
+    page.update()
+
 
     def open_stealth_mode(e):
         target_ip = entry_target.value
@@ -61,17 +143,20 @@ def main(page: ft.Page):
             page.snack_bar.open = True
         page.update()
 
+
     def generar_reporte_pdf(e):
         Report.generar_reporte_pdf()
         page.snack_bar = ft.SnackBar(ft.Text("Reporte PDF generado correctamente."))
         page.snack_bar.open = True
         page.update()
 
+
     def exportar_csv(e):
         Report.exportar_csv()
         page.snack_bar = ft.SnackBar(ft.Text("Reporte CSV generado correctamente."))
         page.snack_bar.open = True
         page.update()
+
 
     # --- Funciones de escaneo ---
     def scan_tcp(target_ip, target_port, scan_type):
@@ -251,10 +336,10 @@ def main(page: ft.Page):
             page.update()
 
     # --- Funciones para la detección de dispositivos con pyshark ---
-    def capture_and_analyze_packets(interface='eth0', timeout=10):
+    def capture_and_analyze_packets(interface='UTF-8', timeout=10):
         """
         Captura paquetes de red y analiza dispositivos conectados.
-        :param interface: Interfaz de red (por ejemplo, 'eth0' o 'wlan0').
+        :param interface: Interfaz de red (por ejemplo, 'UTF-8' o 'wlan0').
         :param timeout: Tiempo de captura en segundos.
         """
         print(f"Iniciando captura en la interfaz {interface}...")
@@ -328,7 +413,7 @@ def main(page: ft.Page):
         """
         Inicia la captura y análisis de dispositivos.
         """
-        devices = capture_and_analyze_packets(interface='eth0', timeout=30)
+        devices = capture_and_analyze_packets(interface='UTF-8', timeout=30)
         results_text.value = "Dispositivos detectados:\n"
         for ip, info in devices.items():
             results_text.value += f"IP: {ip}, MAC: {info['mac']}, OS: {info['os']}, Hostname: {info['hostname']}\n"
@@ -378,6 +463,7 @@ def main(page: ft.Page):
         items=[
             ft.PopupMenuItem(text="Detección de Anomalías", on_click=lambda _: open_anomaly_detection()),
             ft.PopupMenuItem(text="Escaneo en la Nube", on_click=lambda _: open_cloud_scanning()),
+            ft.PopupMenuItem(text="Integración con Shodan", on_click=lambda _: open_shodan_integration()), 
             ft.PopupMenuItem(text="Modo Sigiloso", on_click=lambda _: open_stealth_mode()),
             ft.PopupMenuItem(text="Generar Reporte PDF", on_click=lambda _: generar_reporte_pdf()),
             ft.PopupMenuItem(text="Exportar Reporte CSV", on_click=lambda _: exportar_csv()),
